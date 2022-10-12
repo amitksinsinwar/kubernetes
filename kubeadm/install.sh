@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+# Bash Script to install kubeadm node
+
+echo "Enabling the Kernel Modules and parameters"
+
+cat <<EOF | sudo tee /etc/modules-load.d/containerd.conf
+overlay
+br_netfilter
+EOF
+
+sudo modprobe overlay
+sudo modprobe br_netfilter
+
+cat <<EOF | sudo tee /etc/sysctl.d/kubernetes-cri.conf
+net.bridge.bridge-nf-call-iptables = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.ipv4.ip_forward = 1
+EOF
+
+sudo sysctl --system
+
+echo "installing and configuring containerd"
+
+sudo apt update  && sudo apt install -y containerd
+sudo mkdir /etc/cotnainerd
+sudo containerd config default | sudo tee /etc/containerd/config.toml
+sudo systemctl restart containerd
+sudo systemctl status containerd
+
+echo "Disabling swap"
+sudo swapoff -a
+
+echo "Installing dependencies packages"
+sudo apt update && sudo apt install -y apt-transport-https curl
+sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+echo "Installing Kubeadm kubelet and kubectl"
+sudo apt update
+sudo apt install kubeadm=1.24.0-00 kubelet=1.24.0-00 kubectl=1.24.0-00
+
+
+
+
+
+
