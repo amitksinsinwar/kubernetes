@@ -153,3 +153,31 @@ kubeadm version: &version.Info{Major:"1", Minor:"24", GitVersion:"v1.24.0", GitC
 ```
 
 ## Bootstrap the cluster
+
+```bash
+$ sudo kubeadm init --pod-network-cidr 10.70.0.0/16 --service-cidr 10.99.0.0
+```
+
+## Copy the Kubernetes config file for kubectl to normal user
+
+```bash
+$ mkdir .kube
+$ sudo cp /etc/kubenetes/admin.conf .kube/config
+$ sudo chown $(id -u):$(id -g) .kube/config
+```
+
+now you can run `kubectl` command to get the required resources information.
+
+```bash
+$ kubectl get pods
+No resources found in default namespace.
+
+$ kubectl get nodes
+NAME              STATUS     ROLES           AGE     VERSION
+kubeadm-node-01   NotReady   control-plane   9m54s   v1.24.0
+```
+
+## Install Kubernetes Addon or CNI Plugin required for containers
+Different network plugins are available, but we are insall Calico
+
+```bash

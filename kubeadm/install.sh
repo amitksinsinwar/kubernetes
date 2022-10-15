@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-# Bash Script to install kubeadm node
+# This script install required packages and dependencies required for a node while installation Kubernetes cluster using Kubeadm.
+# This script will install version 1.24.0 of kubeadm, kubelet and kubectl by default, you can update the version number or remove to 
+# version numbers for the latest packages.
 
 echo "Enabling the Kernel Modules and parameters"
 
@@ -23,7 +25,7 @@ sudo sysctl --system
 echo "installing and configuring containerd"
 
 sudo apt update  && sudo apt install -y containerd
-sudo mkdir /etc/cotnainerd
+sudo mkdir /etc/containerd
 sudo containerd config default | sudo tee /etc/containerd/config.toml
 sudo systemctl restart containerd
 sudo systemctl status containerd
@@ -38,7 +40,7 @@ echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https:/
 
 echo "Installing Kubeadm kubelet and kubectl"
 sudo apt update
-sudo apt install kubeadm=1.24.0-00 kubelet=1.24.0-00 kubectl=1.24.0-00
+sudo apt install -y kubeadm=1.24.0-00 kubelet=1.24.0-00 kubectl=1.24.0-00
 
 
 
